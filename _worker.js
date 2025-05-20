@@ -235,223 +235,55 @@ async function ADD(envadd) {
 	return add;
 }
 
-async function nginx() {
-  const text = `
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Glucy.top 状态监控</title>
+  <title>页面跳转中...</title>
   <style>
-    /* 根色调 */
-    :root {
-      --bg-color: #121212;
-      --text-color: #e0e0e0;
-      --text-muted: #bdbdbd;
-      --success: #00e676;
-      --danger: #f44336;
-      --accent: #81d4fa;
-      --card-bg: rgba(255, 255, 255, 0.07);
-      --border-radius: 12px;
-      --shadow: 0 4px 12px rgba(0,0,0,0.5);
-    }
-
-    /* 基础样式 */
     body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      margin: 0; padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #121212;
+      color: #e0e0e0;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 2em 1em;
-      line-height: 1.5;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 2.5em;
-    }
-
-    header h1 {
-      font-size: 3em;
-      margin: 0;
-      color: var(--success);
-      letter-spacing: 1px;
-      text-shadow: 0 0 5px var(--success);
-    }
-
-    header p {
-      font-size: 1.3em;
-      color: var(--text-muted);
-      margin-top: 0.3em;
-      font-weight: 500;
-    }
-
-    main {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    section h2 {
-      color: var(--accent);
-      font-size: 2em;
-      margin-bottom: 1em;
-      border-bottom: 2px solid var(--accent);
-      padding-bottom: 0.3em;
+      font-size: 1.5em;
       user-select: none;
+      text-align: center;
     }
-
-    #status {
-      background: var(--card-bg);
-      padding: 1.8em 2em;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      min-height: 120px;
-      transition: background-color 0.3s ease;
-    }
-
-    .monitor {
-      margin-bottom: 1.8em;
-      padding: 1.2em 1.5em;
-      background: var(--card-bg);
-      border-left: 6px solid var(--accent);
-      border-radius: var(--border-radius);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .monitor.up {
-      border-color: var(--success);
-      box-shadow: 0 4px 16px rgba(0, 230, 118, 0.5);
-    }
-
-    .monitor.down {
-      border-color: var(--danger);
-      box-shadow: 0 4px 16px rgba(244, 67, 54, 0.5);
-    }
-
-    .status-message {
-      font-weight: 700;
-      font-size: 1.25em;
-      margin-bottom: 0.6em;
-      color: var(--accent);
-      user-select: text;
-    }
-
-    .monitor strong {
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
     a {
-      color: var(--accent);
+      color: #81d4fa;
       text-decoration: none;
-      word-break: break-all;
     }
-
-    a:hover,
-    a:focus {
+    a:hover {
       text-decoration: underline;
-      outline: none;
-    }
-
-    footer {
-      margin-top: 4em;
-      text-align: center;
-      font-size: 0.9em;
-      color: var(--text-muted);
-      user-select: none;
-    }
-
-    /* 响应式调整 */
-    @media (max-width: 600px) {
-      body {
-        padding: 1em 0.5em;
-      }
-      main {
-        width: 95%;
-        margin: 0 auto;
-      }
-      header h1 {
-        font-size: 2.2em;
-      }
-      section h2 {
-        font-size: 1.6em;
-      }
-      .monitor {
-        padding: 1em;
-      }
     }
   </style>
-</head>
-<body>
-  <header>
-    <h1>Glucy.top</h1>
-    <p>领先的电子设备解决方案提供商</p>
-  </header>
-
-  <main>
-    <section>
-      <h2>系统状态监控</h2>
-      <div id="status">
-        <p>正在加载监控状态...</p>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <p>© 2025 Glucy.top 版权所有</p>
-  </footer>
-
   <script>
-    async function loadStatus() {
-      const container = document.getElementById('status');
+    // 这里填写你要跳转的目标地址
+    const targetUrl = 'https://sublink-worker.glucy.workers.dev';
 
-      try {
-        const response = await fetch('https://betterstack.glucy.workers.dev/api/summary');
-        if (!response.ok) throw new Error('请求失败');
+    // 延迟跳转时间，单位毫秒
+    const delay = 3000;
 
-        const json = await response.json();
-        const monitors = json.data;
-
-        if (!monitors || monitors.length === 0) {
-          container.innerHTML = '<p>暂无监控数据。</p>';
-          return;
-        }
-
-        container.innerHTML = '';
-        monitors.forEach(item => {
-          const attr = item.attributes;
-
-          const div = document.createElement('div');
-          div.className = 'monitor ' + (attr.status === 'up' ? 'up' : 'down');
-
-          const url = attr.url || '';
-          const name = attr.pronounceable_name || url;
-          const checked = new Date(attr.last_checked_at).toLocaleString();
-
-          div.innerHTML = \`
-            <div class="status-message">\${name}</div>
-            状态：<strong>\${attr.status.toUpperCase()}</strong><br/>
-            检查时间：\${checked}<br/>
-            地址：<a href="\${url}" target="_blank" rel="noopener noreferrer">\${url}</a>
-          \`;
-
-          container.appendChild(div);
-        });
-      } catch (e) {
-        container.innerHTML = '<p style="color: #f44336;">无法加载监控信息，请稍后重试。</p>';
-        console.error(e);
-      }
+    function redirect() {
+      window.location.href = targetUrl;
     }
 
-    loadStatus();
+    // 延迟跳转，提升用户体验，也方便有提示
+    setTimeout(redirect, delay);
   </script>
+</head>
+<body>
+  <div>
+    正在跳转至 <a href="https://example.com" target="_blank" rel="noopener noreferrer">订阅转换</a>，请稍候...
+  </div>
 </body>
 </html>
-  `;
-  return text;
-}
 
 async function sendMessage(type, ip, add_data = "") {
 	if (BotToken !== '' && ChatID !== '') {
