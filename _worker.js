@@ -235,8 +235,19 @@ async function ADD(envadd) {
 	return add;
 }
 
-async function nginx() {
-  const text = `
+export default {
+  async fetch(request) {
+    const html = nginx();
+    return new Response(html, {
+      headers: {
+        "Content-Type": "text/html;charset=UTF-8",
+      },
+    });
+  },
+};
+
+function nginx() {
+  return `
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -375,27 +386,32 @@ async function nginx() {
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     async function fetchMonitors() {
-      const res = await fetch("https://betterstack.glucy.workers.dev/api/raw");
-      const json = await res.json();
-      const container = document.getElementById("monitor-container");
+      try {
+        const res = await fetch("https://betterstack.glucy.workers.dev/api/raw");
+        const json = await res.json();
+        const container = document.getElementById("monitor-container");
+        container.innerHTML = ""; // 清空旧内容
 
-      json.data.forEach(item => {
-        const status = item.attributes.status;
-        const name = item.attributes.pronounceable_name;
-        const url = item.attributes.url;
-        const lastChecked = item.attributes.last_checked_at;
-        const regions = item.attributes.regions;
+        json.data.forEach(item => {
+          const status = item.attributes.status;
+          const name = item.attributes.pronounceable_name;
+          const url = item.attributes.url;
+          const lastChecked = item.attributes.last_checked_at;
+          const regions = item.attributes.regions;
 
-        const div = document.createElement("div");
-        div.className = `monitor ${status}`;
-        div.innerHTML = `
-          <a class="url" href="${url}" target="_blank">${name}</a>
-          <div class="status ${status}">状态：${status.toUpperCase()}</div>
-          <div class="meta">最近检查：${new Date(lastChecked).toLocaleString()}</div>
-          <div class="meta">区域：${regions.map(r => `<span class="region">${r.toUpperCase()}</span>`).join('')}</div>
-        `;
-        container.appendChild(div);
-      });
+          const div = document.createElement("div");
+          div.className = \`monitor \${status}\`;
+          div.innerHTML = \`
+            <a class="url" href="\${url}" target="_blank" rel="noopener noreferrer">\${name}</a>
+            <div class="status \${status}">状态：\${status.toUpperCase()}</div>
+            <div class="meta">最近检查：\${new Date(lastChecked).toLocaleString()}</div>
+            <div class="meta">区域：\${regions.map(r => \`<span class="region">\${r.toUpperCase()}</span>\`).join('')}</div>
+          \`;
+          container.appendChild(div);
+        });
+      } catch (e) {
+        console.error("加载监控数据失败:", e);
+      }
     }
 
     async function loadChart() {
@@ -434,11 +450,7 @@ async function nginx() {
     document.getElementById("filterDownOnly").addEventListener("change", function () {
       const downOnly = this.checked;
       document.querySelectorAll(".monitor").forEach(card => {
-        if (downOnly) {
-          card.style.display = card.classList.contains("down") ? "block" : "none";
-        } else {
-          card.style.display = "block";
-        }
+        card.style.display = downOnly ? (card.classList.contains("down") ? "block" : "none") : "block";
       });
     });
 
@@ -447,10 +459,9 @@ async function nginx() {
   </script>
 </body>
 </html>
-
   `;
-  return text;
 }
+
 
 async function sendMessage(type, ip, add_data = "") {
 	if (BotToken !== '' && ChatID !== '') {
