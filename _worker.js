@@ -244,62 +244,143 @@ async function nginx() {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Glucy.top 状态监控</title>
   <style>
-    body {
-      background-color: #121212;
-      color: #e0e0e0;
-      font-family: "Segoe UI", sans-serif;
-      margin: 0;
-      padding: 2em;
+    /* 根色调 */
+    :root {
+      --bg-color: #121212;
+      --text-color: #e0e0e0;
+      --text-muted: #bdbdbd;
+      --success: #00e676;
+      --danger: #f44336;
+      --accent: #81d4fa;
+      --card-bg: rgba(255, 255, 255, 0.07);
+      --border-radius: 12px;
+      --shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
+
+    /* 基础样式 */
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 2em 1em;
+      line-height: 1.5;
+    }
+
     header {
       text-align: center;
-      margin-bottom: 2em;
+      margin-bottom: 2.5em;
     }
+
     header h1 {
-      font-size: 2.5em;
+      font-size: 3em;
       margin: 0;
-      color: #00e676;
+      color: var(--success);
+      letter-spacing: 1px;
+      text-shadow: 0 0 5px var(--success);
     }
+
     header p {
-      font-size: 1.2em;
-      color: #bdbdbd;
+      font-size: 1.3em;
+      color: var(--text-muted);
+      margin-top: 0.3em;
+      font-weight: 500;
     }
-    #status {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 1.5em;
-      border-radius: 10px;
-      margin-top: 2em;
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
     }
-    #status h2 {
-      color: #00e676;
+
+    section h2 {
+      color: var(--accent);
+      font-size: 2em;
       margin-bottom: 1em;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.3em;
+      user-select: none;
     }
+
+    #status {
+      background: var(--card-bg);
+      padding: 1.8em 2em;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      min-height: 120px;
+      transition: background-color 0.3s ease;
+    }
+
     .monitor {
-      margin-bottom: 1.5em;
-      padding: 1em;
-      background: rgba(255,255,255,0.05);
-      border-left: 5px solid #ffd54f;
-      border-radius: 5px;
+      margin-bottom: 1.8em;
+      padding: 1.2em 1.5em;
+      background: var(--card-bg);
+      border-left: 6px solid var(--accent);
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
-    .monitor.up { border-color: #00e676; }
-    .monitor.down { border-color: #f44336; }
+
+    .monitor.up {
+      border-color: var(--success);
+      box-shadow: 0 4px 16px rgba(0, 230, 118, 0.5);
+    }
+
+    .monitor.down {
+      border-color: var(--danger);
+      box-shadow: 0 4px 16px rgba(244, 67, 54, 0.5);
+    }
+
     .status-message {
-      font-weight: bold;
-      font-size: 1.1em;
-      margin-bottom: 0.5em;
+      font-weight: 700;
+      font-size: 1.25em;
+      margin-bottom: 0.6em;
+      color: var(--accent);
+      user-select: text;
     }
+
+    .monitor strong {
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    a:hover,
+    a:focus {
+      text-decoration: underline;
+      outline: none;
+    }
+
     footer {
       margin-top: 4em;
       text-align: center;
       font-size: 0.9em;
-      color: #757575;
+      color: var(--text-muted);
+      user-select: none;
     }
-    a {
-      color: #81d4fa;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
+
+    /* 响应式调整 */
+    @media (max-width: 600px) {
+      body {
+        padding: 1em 0.5em;
+      }
+      main {
+        width: 95%;
+        margin: 0 auto;
+      }
+      header h1 {
+        font-size: 2.2em;
+      }
+      section h2 {
+        font-size: 1.6em;
+      }
+      .monitor {
+        padding: 1em;
+      }
     }
   </style>
 </head>
@@ -353,13 +434,13 @@ async function nginx() {
             <div class="status-message">\${name}</div>
             状态：<strong>\${attr.status.toUpperCase()}</strong><br/>
             检查时间：\${checked}<br/>
-            地址：<a href="\${url}" target="_blank">\${url}</a>
+            地址：<a href="\${url}" target="_blank" rel="noopener noreferrer">\${url}</a>
           \`;
 
           container.appendChild(div);
         });
       } catch (e) {
-        container.innerHTML = '<p style="color: red;">无法加载监控信息，请稍后重试。</p>';
+        container.innerHTML = '<p style="color: #f44336;">无法加载监控信息，请稍后重试。</p>';
         console.error(e);
       }
     }
