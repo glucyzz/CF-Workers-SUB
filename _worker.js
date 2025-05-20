@@ -267,10 +267,10 @@ async function nginx() {
   </style>
   <script>
     // 这里填写你要跳转的目标地址
-    const targetUrl = 'https://example.com';
+    const targetUrl = 'https://sublink-worker.glucy.workers.dev';
 
     // 延迟跳转时间，单位毫秒
-    const delay = 1000;
+    const delay = 3000;
 
     function redirect() {
       window.location.href = targetUrl;
@@ -282,7 +282,7 @@ async function nginx() {
 </head>
 <body>
   <div>
-    正在跳转至 <a href="https://example.com" target="_blank" rel="noopener noreferrer">目标网站</a>，请稍候...
+    正在跳转至 <a href="https://example.com" target="_blank" rel="noopener noreferrer">订阅转换</a>，请稍候...
   </div>
 </body>
 </html>
