@@ -246,67 +246,84 @@ export default {
   },
 };
 
-function nginx() {
+async function nginx() {
   return `
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Glucy 状态监控中心</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Glucy.top 状态监控</title>
   <link rel="icon" href="https://img.glucy.top/logo.png" />
   <style>
     :root {
-      --bg-color: #0f1117;
-      --card-bg: #1d1f27;
-      --text-color: #e5e7eb;
-      --text-muted: #9ca3af;
-      --success: #4ade80;
-      --danger: #ef4444;
-      --accent: #60a5fa;
-      --card-radius: 12px;
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --text-color: #e0e0e0;
+      --text-muted: #bdbdbd;
+      --success: #00e676;
+      --danger: #f44336;
+      --accent: #81d4fa;
+      --card-radius: 10px;
+      --border-up: 5px solid var(--success);
+      --border-down: 5px solid var(--danger);
     }
 
     body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 2em;
     }
 
     header {
       text-align: center;
-      padding: 2em 1em 1em;
+      margin-bottom: 2em;
     }
 
-    header img {
-      height: 60px;
-      margin-bottom: 0.5em;
+    header h1 {
+      font-size: 2.5em;
+      margin: 0;
+      color: var(--success);
     }
 
-    h1 {
-      margin: 0.2em 0;
-      font-size: 2em;
-      color: var(--accent);
+    header p {
+      font-size: 1.2em;
+      color: var(--text-muted);
+    }
+
+    .filter {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+
+    .filter label {
+      cursor: pointer;
+      color: var(--text-muted);
+      user-select: none;
     }
 
     .container {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
       gap: 1em;
-      padding: 1em;
-      max-width: 1200px;
-      margin: auto;
+      justify-content: center;
+      margin-top: 1em;
     }
 
     .monitor {
       background-color: var(--card-bg);
       border-radius: var(--card-radius);
-      padding: 1.2em;
+      padding: 1em;
       width: 300px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      box-shadow: 0 0 8px rgba(0,0,0,0.5);
+      border-left: var(--border-down);
       transition: transform 0.2s;
+    }
+
+    .monitor.up {
+      border-left: var(--border-up);
     }
 
     .monitor:hover {
@@ -317,10 +334,12 @@ function nginx() {
       font-size: 1.1em;
       color: var(--accent);
       text-decoration: none;
+      word-break: break-all;
     }
 
     .status {
       font-weight: bold;
+      margin: 0.5em 0;
     }
 
     .status.up {
@@ -334,40 +353,39 @@ function nginx() {
     .meta {
       font-size: 0.9em;
       color: var(--text-muted);
-      margin-top: 0.5em;
     }
 
     .region {
       font-size: 0.75em;
       background: var(--accent);
       color: #000;
-      padding: 0.2em 0.4em;
+      padding: 0.15em 0.4em;
       border-radius: 4px;
       margin-right: 0.3em;
+      display: inline-block;
     }
 
     canvas {
       max-width: 100%;
-      background-color: #1e2631;
+      background-color: var(--card-bg);
       border-radius: var(--card-radius);
+      box-shadow: 0 0 8px rgba(0,0,0,0.5);
+      margin: 2em auto;
+      display: block;
     }
 
-    .filter {
+    footer {
+      margin-top: 4em;
       text-align: center;
-      margin: 1em 0;
-    }
-
-    .filter label {
+      font-size: 0.9em;
       color: var(--text-muted);
-      cursor: pointer;
     }
   </style>
 </head>
-
 <body>
   <header>
-    <img src="https://img.glucy.top/logo.png" alt="Glucy Logo" />
-    <h1>Glucy 服务状态</h1>
+    <img src="https://img.glucy.top/logo.png" alt="Glucy Logo" height="60" style="margin-bottom:0.5em;" />
+    <h1>Glucy.top 服务状态监控</h1>
     <p>实时监控 | 多区域 | SLA可视化</p>
   </header>
 
@@ -376,59 +394,80 @@ function nginx() {
     <label for="filterDownOnly">仅显示异常（Down）服务</label>
   </div>
 
-  <div class="container" id="monitor-container"></div>
+  <main>
+    <div class="container" id="monitor-container">
+      <p style="text-align:center; color: var(--text-muted);">正在加载监控数据...</p>
+    </div>
 
-  <section style="margin: 3em auto; max-width: 1000px;">
-    <h2 style="text-align:center; color: var(--accent);">访问响应趋势图</h2>
-    <canvas id="uptimeChart" height="200"></canvas>
-  </section>
+    <section>
+      <h2 style="text-align:center; color: var(--accent);">访问响应时间趋势图</h2>
+      <canvas id="uptimeChart" height="200"></canvas>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Glucy.top 版权所有</p>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     async function fetchMonitors() {
+      const container = document.getElementById('monitor-container');
       try {
-        const res = await fetch("https://betterstack.glucy.workers.dev/api/raw");
+        const res = await fetch('https://betterstack.glucy.workers.dev/api/raw');
         const json = await res.json();
-        const container = document.getElementById("monitor-container");
-        container.innerHTML = ""; // 清空旧内容
 
-        json.data.forEach(item => {
-          const status = item.attributes.status;
-          const name = item.attributes.pronounceable_name;
-          const url = item.attributes.url;
-          const lastChecked = item.attributes.last_checked_at;
-          const regions = item.attributes.regions;
+        const monitors = json.data || [];
+        if (!monitors.length) {
+          container.innerHTML = '<p style="text-align:center; color: var(--text-muted);">暂无监控数据。</p>';
+          return;
+        }
 
-          const div = document.createElement("div");
-          div.className = \`monitor \${status}\`;
+        container.innerHTML = '';
+        monitors.forEach(item => {
+          const attr = item.attributes;
+          const status = attr.status;
+          const name = attr.pronounceable_name || attr.url;
+          const url = attr.url || '#';
+          const lastChecked = new Date(attr.last_checked_at).toLocaleString();
+          const regions = attr.regions || [];
+
+          const div = document.createElement('div');
+          div.className = 'monitor ' + status;
           div.innerHTML = \`
             <a class="url" href="\${url}" target="_blank" rel="noopener noreferrer">\${name}</a>
             <div class="status \${status}">状态：\${status.toUpperCase()}</div>
-            <div class="meta">最近检查：\${new Date(lastChecked).toLocaleString()}</div>
-            <div class="meta">区域：\${regions.map(r => \`<span class="region">\${r.toUpperCase()}</span>\`).join('')}</div>
+            <div class="meta">最近检查：\${lastChecked}</div>
+            <div class="meta">区域：\${regions.map(r => '<span class="region">' + r.toUpperCase() + '</span>').join('')}</div>
           \`;
           container.appendChild(div);
         });
       } catch (e) {
-        console.error("加载监控数据失败:", e);
+        container.innerHTML = '<p style="color: red; text-align:center;">无法加载监控信息，请稍后重试。</p>';
+        console.error(e);
       }
     }
 
     async function loadChart() {
       try {
-        const res = await fetch("https://betterstack.glucy.workers.dev/api/metrics");
+        const res = await fetch('https://betterstack.glucy.workers.dev/api/metrics');
         const data = await res.json();
-        const metric = data.metrics[0];
+        const metric = data.metrics && data.metrics[0];
 
-        new Chart(document.getElementById("uptimeChart"), {
-          type: "line",
+        if (!metric) {
+          console.warn('无有效指标数据');
+          return;
+        }
+
+        new Chart(document.getElementById('uptimeChart'), {
+          type: 'line',
           data: {
             labels: metric.timestamps,
             datasets: [{
-              label: "响应时间 (ms)",
+              label: '响应时间 (ms)',
               data: metric.response_times,
-              borderColor: "#81d4fa",
-              backgroundColor: "rgba(129, 212, 250, 0.2)",
+              borderColor: '#81d4fa',
+              backgroundColor: 'rgba(129, 212, 250, 0.2)',
               tension: 0.4,
               pointRadius: 4,
               fill: true
@@ -437,20 +476,20 @@ function nginx() {
           options: {
             plugins: { legend: { display: true } },
             scales: {
-              x: { title: { display: true, text: "时间" } },
-              y: { title: { display: true, text: "响应时间 (毫秒)" } }
+              x: { title: { display: true, text: '时间' } },
+              y: { title: { display: true, text: '响应时间 (毫秒)' } }
             }
           }
         });
       } catch (e) {
-        console.warn("无法加载图表：", e);
+        console.warn('无法加载图表:', e);
       }
     }
 
-    document.getElementById("filterDownOnly").addEventListener("change", function () {
+    document.getElementById('filterDownOnly').addEventListener('change', function() {
       const downOnly = this.checked;
-      document.querySelectorAll(".monitor").forEach(card => {
-        card.style.display = downOnly ? (card.classList.contains("down") ? "block" : "none") : "block";
+      document.querySelectorAll('.monitor').forEach(card => {
+        card.style.display = downOnly ? (card.classList.contains('down') ? 'block' : 'none') : 'block';
       });
     });
 
