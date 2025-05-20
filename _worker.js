@@ -235,16 +235,6 @@ async function ADD(envadd) {
 	return add;
 }
 
-export default {
-  async fetch(request) {
-    const html = nginx();
-    return new Response(html, {
-      headers: {
-        "Content-Type": "text/html;charset=UTF-8",
-      },
-    });
-  },
-};
 
 async function nginx() {
   return `
