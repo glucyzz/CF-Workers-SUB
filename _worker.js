@@ -236,8 +236,8 @@ async function ADD(envadd) {
 }
 
 async function nginx() {
-	const text = `
-	<!DOCTYPE html>
+  const text = `
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
@@ -251,35 +251,29 @@ async function nginx() {
       margin: 0;
       padding: 2em;
     }
-
     header {
       text-align: center;
       margin-bottom: 2em;
     }
-
     header h1 {
       font-size: 2.5em;
       margin: 0;
       color: #00e676;
     }
-
     header p {
       font-size: 1.2em;
       color: #bdbdbd;
     }
-
     #status {
       background: rgba(0, 0, 0, 0.3);
       padding: 1.5em;
       border-radius: 10px;
       margin-top: 2em;
     }
-
     #status h2 {
       color: #00e676;
       margin-bottom: 1em;
     }
-
     .monitor {
       margin-bottom: 1.5em;
       padding: 1em;
@@ -287,28 +281,23 @@ async function nginx() {
       border-left: 5px solid #ffd54f;
       border-radius: 5px;
     }
-
     .monitor.up { border-color: #00e676; }
     .monitor.down { border-color: #f44336; }
-
     .status-message {
       font-weight: bold;
       font-size: 1.1em;
       margin-bottom: 0.5em;
     }
-
     footer {
       margin-top: 4em;
       text-align: center;
       font-size: 0.9em;
       color: #757575;
     }
-
     a {
       color: #81d4fa;
       text-decoration: none;
     }
-
     a:hover {
       text-decoration: underline;
     }
@@ -360,12 +349,12 @@ async function nginx() {
           const name = attr.pronounceable_name || url;
           const checked = new Date(attr.last_checked_at).toLocaleString();
 
-          div.innerHTML = `
-            <div class="status-message">${name}</div>
-            状态：<strong>${attr.status.toUpperCase()}</strong><br/>
-            检查时间：${checked}<br/>
-            地址：<a href="${url}" target="_blank">${url}</a>
-          `;
+          div.innerHTML = \`
+            <div class="status-message">\${name}</div>
+            状态：<strong>\${attr.status.toUpperCase()}</strong><br/>
+            检查时间：\${checked}<br/>
+            地址：<a href="\${url}" target="_blank">\${url}</a>
+          \`;
 
           container.appendChild(div);
         });
@@ -379,9 +368,8 @@ async function nginx() {
   </script>
 </body>
 </html>
-
-	`
-	return text;
+  `;
+  return text;
 }
 
 async function sendMessage(type, ip, add_data = "") {
