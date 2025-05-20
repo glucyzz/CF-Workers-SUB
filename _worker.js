@@ -238,30 +238,36 @@ async function ADD(envadd) {
 async function nginx() {
 	const text = `
 	<!DOCTYPE html>
-	<html>
-	<head>
-	<title>Welcome to nginx!</title>
-	<style>
-		body {
-			width: 35em;
-			margin: 0 auto;
-			font-family: Tahoma, Verdana, Arial, sans-serif;
-		}
-	</style>
-	</head>
-	<body>
-	<h1>Welcome to nginx!</h1>
-	<p>If you see this page, the nginx web server is successfully installed and
-	working. Further configuration is required.</p>
-	
-	<p>For online documentation and support please refer to
-	<a href="http://nginx.org/">nginx.org</a>.<br/>
-	Commercial support is available at
-	<a href="http://nginx.com/">nginx.com</a>.</p>
-	
-	<p><em>Thank you for using nginx.</em></p>
-	</body>
-	</html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>跳转中...</title>
+  <meta http-equiv="refresh" content="3;url=https://www.bing.com" />
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #0078d4;
+      color: white;
+      text-align: center;
+      flex-direction: column;
+    }
+    a {
+      color: #ffdd57;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>页面即将跳转到 Bing 搜索</h1>
+  <p>如果未自动跳转，<a href="https://www.bing.com">请点击这里</a></p>
+</body>
+</html>
+
 	`
 	return text;
 }
