@@ -241,30 +241,142 @@ async function nginx() {
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <title>跳转中...</title>
-  <meta http-equiv="refresh" content="3;url=https://www.bing.com" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Glucy.top 状态监控</title>
   <style>
     body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: "Segoe UI", sans-serif;
       margin: 0;
-      background-color: #0078d4;
-      color: white;
-      text-align: center;
-      flex-direction: column;
+      padding: 2em;
     }
+
+    header {
+      text-align: center;
+      margin-bottom: 2em;
+    }
+
+    header h1 {
+      font-size: 2.5em;
+      margin: 0;
+      color: #00e676;
+    }
+
+    header p {
+      font-size: 1.2em;
+      color: #bdbdbd;
+    }
+
+    #status {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 1.5em;
+      border-radius: 10px;
+      margin-top: 2em;
+    }
+
+    #status h2 {
+      color: #00e676;
+      margin-bottom: 1em;
+    }
+
+    .monitor {
+      margin-bottom: 1.5em;
+      padding: 1em;
+      background: rgba(255,255,255,0.05);
+      border-left: 5px solid #ffd54f;
+      border-radius: 5px;
+    }
+
+    .monitor.up { border-color: #00e676; }
+    .monitor.down { border-color: #f44336; }
+
+    .status-message {
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-bottom: 0.5em;
+    }
+
+    footer {
+      margin-top: 4em;
+      text-align: center;
+      font-size: 0.9em;
+      color: #757575;
+    }
+
     a {
-      color: #ffdd57;
+      color: #81d4fa;
+      text-decoration: none;
+    }
+
+    a:hover {
       text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <h1>页面即将跳转到 Bing 搜索</h1>
-  <p>如果未自动跳转，<a href="https://www.bing.com">请点击这里</a></p>
+  <header>
+    <h1>Glucy.top</h1>
+    <p>领先的电子设备解决方案提供商</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>系统状态监控</h2>
+      <div id="status">
+        <p>正在加载监控状态...</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Glucy.top 版权所有</p>
+  </footer>
+
+  <script>
+    async function loadStatus() {
+      const container = document.getElementById('status');
+
+      try {
+        const response = await fetch('https://betterstack.glucy.workers.dev/api/summary');
+        if (!response.ok) throw new Error('请求失败');
+
+        const json = await response.json();
+        const monitors = json.data;
+
+        if (!monitors || monitors.length === 0) {
+          container.innerHTML = '<p>暂无监控数据。</p>';
+          return;
+        }
+
+        container.innerHTML = '';
+        monitors.forEach(item => {
+          const attr = item.attributes;
+
+          const div = document.createElement('div');
+          div.className = 'monitor ' + (attr.status === 'up' ? 'up' : 'down');
+
+          const url = attr.url || '';
+          const name = attr.pronounceable_name || url;
+          const checked = new Date(attr.last_checked_at).toLocaleString();
+
+          div.innerHTML = `
+            <div class="status-message">${name}</div>
+            状态：<strong>${attr.status.toUpperCase()}</strong><br/>
+            检查时间：${checked}<br/>
+            地址：<a href="${url}" target="_blank">${url}</a>
+          `;
+
+          container.appendChild(div);
+        });
+      } catch (e) {
+        container.innerHTML = '<p style="color: red;">无法加载监控信息，请稍后重试。</p>';
+        console.error(e);
+      }
+    }
+
+    loadStatus();
+  </script>
 </body>
 </html>
 
