@@ -235,6 +235,8 @@ async function ADD(envadd) {
 	return add;
 }
 
+async function nginx() {
+  const text = `
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -265,10 +267,10 @@ async function ADD(envadd) {
   </style>
   <script>
     // 这里填写你要跳转的目标地址
-    const targetUrl = 'https://sublink-worker.glucy.workers.dev';
+    const targetUrl = 'https://example.com';
 
     // 延迟跳转时间，单位毫秒
-    const delay = 3000;
+    const delay = 1000;
 
     function redirect() {
       window.location.href = targetUrl;
@@ -280,10 +282,13 @@ async function ADD(envadd) {
 </head>
 <body>
   <div>
-    正在跳转至 <a href="https://example.com" target="_blank" rel="noopener noreferrer">订阅转换</a>，请稍候...
+    正在跳转至 <a href="https://example.com" target="_blank" rel="noopener noreferrer">目标网站</a>，请稍候...
   </div>
 </body>
 </html>
+  `;
+  return text;
+}
 
 async function sendMessage(type, ip, add_data = "") {
 	if (BotToken !== '' && ChatID !== '') {
