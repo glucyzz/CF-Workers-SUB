@@ -208,7 +208,7 @@ export default {
 				let subConverterContent = await subConverterResponse.text();
 				if (订阅格式 == 'clash') subConverterContent = await clashFix(subConverterContent);
 				// 只有非浏览器订阅才会返回SUBNAME
-				if (!userAgent.includes('mozilla')) responseHeaders["Content-Disposition"] = `attachment; filename*=utf-8''${encodeURIComponent(FileName)}`;
+				if (!userAgent.includes('mozilla')) responseHeaders["Content-Disposition"] = `inline; filename*=utf-8''${encodeURIComponent(FileName)}`;
 				return new Response(subConverterContent, { headers: responseHeaders });
 			} catch (error) {
 				return new Response(base64Data, { headers: responseHeaders });
@@ -851,4 +851,5 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 	}
 
 }
+
 
