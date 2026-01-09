@@ -258,6 +258,61 @@ async function nginx() {
 	return text;
 }
 
+async function nginx() {
+  const text = `
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>页面跳转中...</title>
+  <style>
+    body {
+      margin: 0; padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 1.5em;
+      user-select: none;
+      text-align: center;
+    }
+    a {
+      color: #81d4fa;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+  <script>
+    // 这里填写你要跳转的目标地址
+    const targetUrl = 'https://sublink-worker.glucy.workers.dev';
+
+    // 延迟跳转时间，单位毫秒
+    const delay = 3000;
+
+    function redirect() {
+      window.location.href = targetUrl;
+    }
+
+    // 延迟跳转，提升用户体验，也方便有提示
+    setTimeout(redirect, delay);
+  </script>
+</head>
+<body>
+  <div>
+    正在跳转至 <a href="https://example.com" target="_blank" rel="noopener noreferrer">订阅转换</a>，请稍候...
+  </div>
+</body>
+</html>
+  `;
+  return text;
+}
+
 async function sendMessage(type, ip, add_data = "") {
 	if (BotToken !== '' && ChatID !== '') {
 		let msg = "";
@@ -825,4 +880,5 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 			headers: { "Content-Type": "text/plain;charset=utf-8" }
 		});
 	}
+
 }
